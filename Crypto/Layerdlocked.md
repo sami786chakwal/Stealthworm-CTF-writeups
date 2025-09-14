@@ -24,9 +24,6 @@ Use a wordlist to crack the ZIP password (`abc123`), extract `raw.txt` which con
 
 SW{p@ssw0rd!}
 
-yaml
-Copy code
-
 ---
 
 ## Step-by-step analysis & solution
@@ -34,7 +31,7 @@ Copy code
 ### 1. Confirm the archive
 Check the file type:
 
-```bash
+
 $ file Layeredlocked.zip
 Layeredlocked.zip: Zip archive data, at least v2.0 to extract
 2. Crack the ZIP password (layer 1)
@@ -42,22 +39,15 @@ The ZIP is password-protected. Use john (or fcrackzip / 7z + wordlist) with rock
 
 Example using fcrackzip:
 
-bash
-Copy code
 fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt Layeredlocked.zip
 # Found password: abc123
 Example using john (create a zip hash first using zip2john):
 
-bash
-Copy code
 zip2john Layeredlocked.zip > zip.hash
 john --wordlist=/usr/share/wordlists/rockyou.txt zip.hash
 # john shows password: abc123
 3. Extract archive with discovered password
 Use the found password to extract:
-
-bash
-Copy code
 unzip -P abc123 Layeredlocked.zip -d layeredlocked_extracted
 # or
 7z x -pabc123 Layeredlocked.zip -olayeredlocked_extracted
@@ -66,8 +56,6 @@ You should get a file named raw.txt (or similar).
 4. Inspect raw.txt — it contains a hash
 Open raw.txt:
 
-bash
-Copy code
 $ cat layeredlocked_extracted/raw.txt
 # (shows a hash string, e.g. something like: 5f4dcc3b5aa765d61d8327deb882cf99)
 (Exact hash value will depend on the challenge; the file contained a crackable hash.)
@@ -79,8 +67,7 @@ Quick online lookup (CrackStation): paste the hash → discovered plaintext: p@s
 
 Local example with john (if hash type known — here we show a generic flow):
 
-bash
-Copy code
+
 # if hash type is MD5:
 john --wordlist=/usr/share/wordlists/rockyou.txt --format=raw-md5 raw.txt
 
@@ -91,6 +78,5 @@ Result: the hash resolves to p@ssw0rd!.
 6. Final flag
 The cracked password is the flag payload:
 
-css
-Copy code
 SW{p@ssw0rd!}
+
