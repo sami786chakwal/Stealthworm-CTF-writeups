@@ -1,4 +1,3 @@
-# Challenge: The Minions
 **Category:** Steganography  
 **Points:** 250  
 **Author:** Sami Choudhary
@@ -9,62 +8,39 @@
 ---
 
 ## Files provided
-- `Minions.jpeg` — image containing hidden data (steg)
+- `Minions.jpeg` — image containing hidden data
 - (After extraction) `flag.txt` — base64-encoded flag
 
 ---
 
 ## Reproduction (what players see)
-Open the image or run quick forensics tools:
+Opening the image shows nothing special, but metadata contains hints.
 
-```bash
-$ file Minions.jpeg
-Minions.jpeg: JPEG image data, JFIF standard 1.01, ...
-A quick metadata check reveals useful keywords/clues.
+---
 
-Quick solution (one-line)
-Inspect metadata with exiftool to find the keyword my admin (used as a passphrase), use steghide to extract flag.txt, then base64-decode the file to reveal the flag SW{this_is_fun}.
+## Quick solution (one-line)
+Check metadata with exiftool, find the passphrase `my admin`, extract with steghide, then base64-decode the hidden file to get the flag `SW{this_is_fun}`.
 
-Step-by-step analysis & solution
-1. Inspect metadata with exiftool
-Check image metadata to look for hints (keywords, comments, author, etc.):
+---
 
-bash
-Copy code
-$ exiftool Minions.jpeg
-# ... output ...
-# Keywords                        : my admin
-# Comment                         : ...
-The Keywords (or another metadata field) contains the passphrase: my admin.
+## Step-by-step analysis & solution
+1. Inspect metadata  
+   Use exiftool to view metadata and find the passphrase (example output shows `Keywords : my admin`). The passphrase is `my admin`.
 
-2. Use steghide to extract data (use the passphrase)
-Use the discovered passphrase to extract the hidden file:
+2. Extract hidden file with steghide  
+   Use the discovered passphrase to extract the hidden file; steghide will write `flag.txt` to the current directory.
 
-bash
-Copy code
-$ steghide extract -sf Minions.jpeg
-Enter passphrase: my admin
-wrote: "flag.txt"
-This creates flag.txt in the current directory.
+3. Decode the extracted file  
+   The extracted `flag.txt` contains base64 text. Decode it to reveal `SW{this_is_fun}`.
 
-3. Inspect and decode flag.txt
-Open flag.txt — it contains base64 text:
+---
 
-bash
-Copy code
-$ cat flag.txt
-U1d7dGhpcy5pc19mdW58Cg==
-Decode it:
+The final flag is:  
+**`SW{this_is_fun}`**
 
-bash
-Copy code
-$ base64 -d flag.txt
-SW{this_is_fun}
-The flag is:
+---
 
-Copy code
-SW{this_is_fun}
-Optional: alternative tools / checks
-If steghide fails, try other tools (binwalk, zsteg for PNGs, or foremost) — but here steghide with passphrase from metadata is the correct method.
-
-Always inspect metadata first (exiftool) — flags or passphrases are often hidden there as hints.
+Notes:
+- If steghide fails, try alternative tools such as binwalk or foremost, but here the metadata passphrase and steghide are the intended path.
+- Consider avoiding raw flags in public repos if you want participants to solve challenges without spoilers.
+EOF
