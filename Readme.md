@@ -6,8 +6,8 @@ Each writeup includes the challenge description, tools used, thought process, an
 ---
 
 ## 📂 Repository Structure
-
-Stealthworm-CTF/
+```
+###Stealthworm-CTF/
 ├── README.md → This file
 ├── crypto/ → Cryptography challenges
 │ └── layered-locked.md
@@ -19,7 +19,7 @@ Stealthworm-CTF/
 └── assets/ → Extra files (images, binaries, audio)
 ├── images/
 └── binaries/
-
+```
 ---
 
 ## 🏴 Challenges Covered
@@ -51,3 +51,4 @@ Stealthworm-CTF/
 
 ## 👥 Team
 **Stealthworm** — CTF developers and players.  
+
