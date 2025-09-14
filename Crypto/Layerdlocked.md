@@ -1,6 +1,8 @@
+mkdir -p crypto
+cat > crypto/layered-locked.md <<'EOF'
 # Challenge: LayeredLocked
 **Category:** Cryptography / Multi-layer (archive + password + hash)  
-**Points:** 250 
+**Points:** 250  
 **Author:** Sami Choudhary
 
 **Challenge statement:**  
@@ -20,63 +22,38 @@ Trying to open the ZIP normally fails because it is password protected.
 ---
 
 ## Quick solution (one-line)
-Use a wordlist to crack the ZIP password (`abc123`), extract `raw.txt` which contains a hash, then crack that hash (via CrackStation / online or local cracking) to recover `p@ssw0rd!`. The flag is:
-
-SW{p@ssw0rd!}
+Use a wordlist to crack the ZIP password (`abc123`), extract `raw.txt` which contains a hash, then crack that hash (via CrackStation or local cracking) to recover `p@ssw0rd!`. The flag is:  
+**SW{p@ssw0rd!}**
 
 ---
 
 ## Step-by-step analysis & solution
 
-### 1. Confirm the archive
-Check the file type:
+1. **Confirm the archive**  
+   Check the file type:  
+   $ file Layeredlocked.zip  
+   Layeredlocked.zip: Zip archive data, at least v2.0 to extract
 
+2. **Crack the ZIP password (layer 1)**  
+   The ZIP is password-protected. Use a wordlist (e.g., `rockyou.txt`) with tools such as `fcrackzip`, `john` (via `zip2john`), or `7z` to bruteforce or dictionary-attack the archive. Example results show the password `abc123`.
 
-$ file Layeredlocked.zip
-Layeredlocked.zip: Zip archive data, at least v2.0 to extract
-2. Crack the ZIP password (layer 1)
-The ZIP is password-protected. Use john (or fcrackzip / 7z + wordlist) with rockyou.txt to bruteforce:
+3. **Extract archive with discovered password**  
+   Use the found password to extract the archive. Extraction yields a file named `raw.txt` (or similar) inside the extracted directory.
 
-Example using fcrackzip:
+4. **Inspect raw.txt — it contains a hash**  
+   Open `raw.txt` to see the contained hash string. The hash type may vary; the file contains a crackable hash.
 
-fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt Layeredlocked.zip
-# Found password: abc123
-Example using john (create a zip hash first using zip2john):
+5. **Crack the hash (layer 2)**  
+   Use an online service like CrackStation or local cracking tools (`john`, `hashcat`) with appropriate format selection or wordlists to recover the plaintext. For example, the hash resolves to `p@ssw0rd!`.
 
-zip2john Layeredlocked.zip > zip.hash
-john --wordlist=/usr/share/wordlists/rockyou.txt zip.hash
-# john shows password: abc123
-3. Extract archive with discovered password
-Use the found password to extract:
-unzip -P abc123 Layeredlocked.zip -d layeredlocked_extracted
-# or
-7z x -pabc123 Layeredlocked.zip -olayeredlocked_extracted
-You should get a file named raw.txt (or similar).
+6. **Final flag**  
+   Wrap the recovered plaintext in the flag format:  
+   **SW{p@ssw0rd!}**
 
-4. Inspect raw.txt — it contains a hash
-Open raw.txt:
+---
 
-$ cat layeredlocked_extracted/raw.txt
-# (shows a hash string, e.g. something like: 5f4dcc3b5aa765d61d8327deb882cf99)
-(Exact hash value will depend on the challenge; the file contained a crackable hash.)
-
-5. Crack the hash (layer 2)
-Use an online service (CrackStation) or local cracking tools. Example with an online lookup (CrackStation) or hashcat/john locally:
-
-Quick online lookup (CrackStation): paste the hash → discovered plaintext: p@ssw0rd!
-
-Local example with john (if hash type known — here we show a generic flow):
-
-
-# if hash type is MD5:
-john --wordlist=/usr/share/wordlists/rockyou.txt --format=raw-md5 raw.txt
-
-# if hash type unknown, try hash-identifier or use hashcat with -m auto (or try common types)
-hash-identifier layeredlocked_extracted/raw.txt
-Result: the hash resolves to p@ssw0rd!.
-
-6. Final flag
-The cracked password is the flag payload:
-
-SW{p@ssw0rd!}
-
+## Notes
+- If the hash type is unknown, use `hash-identifier` or try common formats with `john`/`hashcat`.  
+- If ZIP cracking is slow, narrow wordlists or targeted rules help.  
+- Consider removing raw flags from public repos or keeping a separate private solutions branch to avoid spoiling challenges.
+EOF
