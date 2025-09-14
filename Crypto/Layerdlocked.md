@@ -1,5 +1,4 @@
-mkdir -p crypto
-cat > crypto/layered-locked.md <<'EOF'
+
 # Challenge: LayeredLocked
 **Category:** Cryptography / Multi-layer (archive + password + hash)  
 **Points:** 250  
@@ -57,3 +56,4 @@ Use a wordlist to crack the ZIP password (`abc123`), extract `raw.txt` which con
 - If ZIP cracking is slow, narrow wordlists or targeted rules help.  
 - Consider removing raw flags from public repos or keeping a separate private solutions branch to avoid spoiling challenges.
 EOF
+
